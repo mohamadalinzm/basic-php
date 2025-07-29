@@ -25,4 +25,9 @@ class Car
         return $this->color;
     }
 
+    public function getModel(): string
+    {
+        return $this->model;
+    }
+
 }
