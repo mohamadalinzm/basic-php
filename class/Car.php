@@ -20,4 +20,9 @@ class Car
         return "Car Model: {$this->model}, Color: {$this->color}, Year: {$this->year}";
     }
 
+    public function getColor(): string
+    {
+        return $this->color;
+    }
+
 }
