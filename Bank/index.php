@@ -1,14 +1,19 @@
 <?php
 
 require_once 'autoload.php';
+require_once 'Views/customer-panel.php';
 
 use Actions\AuthenticationAction;
+use Models\AccountType;
 
 global $customers;
 global $activeCustomer;
-
+global $accounts;
+global $accountTypes;
 
 while (true) {
+    initCustomer($customers);
+    initialCommands($accountTypes);
     showOptions();
     $input = readline("Enter an Action: ");
 
@@ -17,7 +22,7 @@ while (true) {
             registerForm($customers);
             break;
         case '2':
-            loginForm($customers);
+            loginForm($customers,$activeCustomer,$accountTypes);
             break;
         case '3':
             echo "Exiting...\n";
@@ -57,7 +62,7 @@ function registerForm(&$customers): void
 
 }
 
-function loginForm(&$customers): void
+function loginForm(&$customers,&$activeCustomer,&$accountTypes): void
 {
     echo "Login Form:\n";
     $username = readline("Username: ");
@@ -68,31 +73,32 @@ function loginForm(&$customers): void
 
     echo "Login successful for user: $activeCustomer->username\n";
 
-    showCustomerPanel($activeCustomer);
+    showCustomerPanel($activeCustomer,$accounts,$accountTypes);
 }
 
-function showCustomerPanel($activeCustomer)
+function initialCommands(&$accountTypes): void
 {
-    while (true) {
-        showOptions();
-        $input = readline("Enter an Action: ");
+    $type =  new AccountType(
+        'Savings',
+        ['minBalance' => 1000, 'maxBalance' => 100000]
+    );
 
-        switch ($input) {
-            case '1':
-                registerForm($customers);
-                break;
-            case '2':
-                loginForm($customers);
-                break;
-            case '3':
-                echo "Exiting...\n";
-                sleep(2);
-                exit(0);
-            default:
-                echo "Invalid option. Please try again.\n";
-        }
+    $accountTypes[] = $type;
+}
 
-        print_r($customers);
+function initCustomer(&$customers): void
+{
+    $password = password_hash('1234', PASSWORD_DEFAULT);
+    $customers[] = new Models\Customer(
+        uniqid(),
+        'John',
+        'Wick',
+        'nazem',
+        '12312312312',
+        $password,
+        '123 Main St',
+        '2023-10-01 12:00:00'
+    );
 
-    }
+//    $activeCustomer = $customers[0];
 }
